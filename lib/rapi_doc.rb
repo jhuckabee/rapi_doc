@@ -23,7 +23,10 @@ module RapiDoc
       controller_info = {}
       routes = Dir.chdir(::Rails.root.to_s) { `rake routes` }
       routes.split("\n").each do |entry|
-        method, url, controller_action = entry.split.slice(-3, 3)
+        next if entry =~ /database\.yml/
+        route_parts = entry.split(' ')
+        route_parts.unshift(nil) unless route_parts.length == 4
+        controller, method, url, controller_action = route_parts
         controller, action = controller_action.split('#')
         puts "For \"#{controller}\", found action \"#{action}\" with #{method} at \"#{url}\""
         controller_info[controller] ||= []
@@ -38,10 +41,9 @@ module RapiDoc
       controller_info = get_controller_info!
       resources = []
       controller_info.each do |controller, action_entries|
-        #controller_class = controller.capitalize + 'Controller'
         controller_location = controller_dir(controller + '_controller.rb')
         controller_base_routes = action_entries.select do |action, method, url|
-          url.index('/', 1).nil?
+          ['index', 'create'].include?(action)
         end
         # base urls differ only by the method [GET or POST]. So, any one will do.
         controller_url = controller_base_routes[0][2].gsub(/\(.*\)/, '') # omit the trailing format

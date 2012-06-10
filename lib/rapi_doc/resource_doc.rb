@@ -9,7 +9,7 @@ module RapiDoc
   # method documentation, which will be contained in MethodDoc.
   class ResourceDoc
 
-    attr_reader :name, :resource_location, :controller_name, :class_block, :function_blocks, :resource_header, :resource_methods
+    attr_reader :name, :resource_location, :controller_name, :class_block, :function_blocks, :resource_header, :resource_methods, :resource_order
 
     # Initializes ResourceDoc.
     def initialize(name, resource_location, controller_location, options = {})
